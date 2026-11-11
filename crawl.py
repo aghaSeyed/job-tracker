@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Crawl job boards (Tehran, software) and flag jobs from target companies."""
-import json, re, time, html, urllib.parse, urllib.request, pathlib, datetime
+import os, json, re, time, html, urllib.parse, urllib.request, pathlib, datetime
 D = pathlib.Path(__file__).parent
+DATA = pathlib.Path(os.environ.get("DATA_DIR", D))
 UA = {"User-Agent": "Mozilla/5.0"}
 KEYWORDS = ["php","laravel","backend","بک‌اند","python","golang","node.js","java","software engineer","برنامه نویس","developer","devops","full stack","symfony","react","mobile","android","data engineer"]
 PAGES = 3
@@ -66,7 +67,7 @@ def main():
             if any(a.lower().replace("\u200c"," ") in t for a in c["aliases"]): return c
     for j in jobs.values():
         c = match(j); j["target"] = c["name"] if c else None; j["group"] = c["group"] if c else None
-    (D / "jobs.json").write_text(json.dumps({"crawled": datetime.datetime.now().isoformat(timespec="minutes"), "jobs": list(jobs.values())}, ensure_ascii=False, indent=1), "utf8")
+    (DATA / "jobs.json").write_text(json.dumps({"crawled": datetime.datetime.now().isoformat(timespec="minutes"), "jobs": list(jobs.values())}, ensure_ascii=False, indent=1), "utf8")
     print(len(jobs), "jobs,", sum(1 for j in jobs.values() if j["target"]), "from target companies")
 
 if __name__ == "__main__": main()

@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Job tracker web app. Run: python3 server.py  -> http://127.0.0.1:8765"""
-import json, threading, pathlib, datetime, traceback
+import os, json, threading, pathlib, datetime, traceback
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 import crawl
 
 D = pathlib.Path(__file__).parent
-TRACK, MANUAL = D / "tracker.json", D / "manual.json"
+DATA = crawl.DATA; DATA.mkdir(parents=True, exist_ok=True)
+TRACK, MANUAL = DATA / "tracker.json", DATA / "manual.json"
 lock = threading.Lock()
 crawl_state = {"running": False, "error": None, "finished": None}
 
@@ -35,7 +36,7 @@ class H(BaseHTTPRequestHandler):
         if self.path == "/":
             return self.send(200, (D / "static/index.html").read_bytes(), "text/html")
         if self.path == "/api/data":
-            jobs = load(D / "jobs.json", {"crawled": "never", "jobs": []})
+            jobs = load(DATA / "jobs.json", {"crawled": "never", "jobs": []})
             return self.send(200, {"crawled": jobs["crawled"], "jobs": jobs["jobs"] + load(MANUAL, []),
                                    "companies": load(D / "companies.json", []), "tracker": load(TRACK, {}), "crawl": crawl_state})
         self.send(404, {"error": "not found"})
@@ -68,5 +69,6 @@ class H(BaseHTTPRequestHandler):
         self.send(404, {"error": "not found"})
 
 if __name__ == "__main__":
-    print("Job tracker on http://127.0.0.1:8765")
-    ThreadingHTTPServer(("127.0.0.1", 8765), H).serve_forever()
+    host, port = os.environ.get("HOST", "127.0.0.1"), int(os.environ.get("PORT", 8765))
+    print(f"Job tracker on http://{host}:{port}")
+    ThreadingHTTPServer((host, port), H).serve_forever()

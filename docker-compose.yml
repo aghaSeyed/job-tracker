@@ -1,0 +1,10 @@
+services:
+  job-tracker:
+    build: .
+    ports:
+      - "127.0.0.1:8765:8765"   # local only; change to "8765:8765" to expose on LAN
+    volumes:
+      - job-data:/data
+    restart: unless-stopped
+volumes:
+  job-data:
