@@ -1,0 +1,92 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Job Tracker</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--fg:#1c2330;--mut:#6b7585;--line:#e2e6ec;--acc:#2563eb}
+@media(prefers-color-scheme:dark){:root{--bg:#12151b;--card:#1b2029;--fg:#e6e9ef;--mut:#8b95a5;--line:#2a313d;--acc:#6ea0ff}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,"Vazirmatn",sans-serif}
+header{padding:16px 24px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--line);background:var(--card);position:sticky;top:0;z-index:5}
+h1{font-size:18px;margin:0}.mut{color:var(--mut)}main{padding:16px 24px;max-width:1300px;margin:auto}
+button,select,input,textarea{font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:6px 10px}
+button{cursor:pointer}button.pri{background:var(--acc);border-color:var(--acc);color:#fff}button:disabled{opacity:.5}
+.tabs{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap}.tabs button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}.bar input[type=search]{flex:1;min-width:220px}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}.pill{padding:2px 10px;border-radius:99px;border:1px solid var(--line);font-size:12px}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:12px;color:var(--mut);cursor:pointer;white-space:nowrap}
+td.t{unicode-bidi:plaintext}a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.s-applied{background:#2563eb22}.s-interview{background:#f5b30022}.s-offer{background:#16a34a2e}.s-rejected{background:#dc262622}.s-ignored{opacity:.5}
+select.st{min-width:104px}.note{width:100%;min-width:140px;font-size:12px;padding:4px 6px}.src{font-size:11px;color:var(--mut)}
+dialog{border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--fg);padding:20px;width:min(460px,92vw)}
+dialog input{width:100%;margin:4px 0 10px}.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.cc{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px}.cc h3{margin:0 0 4px;font-size:14px}
+@media(max-width:800px){th:nth-child(n+5),td:nth-child(n+5){display:none}}
+</style></head><body>
+<header><h1>Job Tracker <span class="mut" style="font-weight:400">· Tehran software</span></h1>
+<span class="mut" id="crawled"></span><span style="margin-left:auto"></span>
+<button id="add">+ Add job</button><button class="pri" id="refresh">Refresh from sites</button></header>
+<main>
+<div class="tabs" id="tabs"></div>
+<div class="bar"><input type="search" id="q" placeholder="Search title, company, note…">
+<select id="fs"><option value="">All statuses</option></select>
+<select id="fsrc"><option value="">All sources</option></select>
+<label><input type="checkbox" id="eng" checked> engineering only</label>
+<label><input type="checkbox" id="hide"> hide rejected/ignored</label>
+<div class="stats" id="stats"></div></div>
+<div id="view"></div></main>
+<dialog id="dlg"><form method="dialog"><h3 style="margin-top:0">Add job (internal company site etc.)</h3>
+<label>Title<input id="mt" required></label><label>Company<input id="mc"></label><label>Link<input id="mu" type="url" required></label>
+<label>Salary<input id="ms" placeholder="optional"></label>
+<div style="display:flex;gap:8px;justify-content:flex-end"><button value="cancel">Cancel</button><button class="pri" id="msave" value="ok">Save</button></div></form></dialog>
+<script>
+const STATES=["new","saved","applied","interview","offer","rejected","ignored"];
+const ENG=/engineer|developer|devops|sre|backend|back-end|frontend|front-end|full.?stack|software|programmer|dba|database|android|ios|mobile|data (scientist|engineer)|machine learning|qa|test|برنامه|توسعه|دواپس|مهندس نرم|تحلیلگر ارشد نرم|طراح نرم|کارشناس.*(نرم|dev)/i;
+const NOENG=/marketing|مارکتینگ|فروش|مدرس|محتوا|سئو|seo|حسابدار|اداری|پشتیبان دستگاه|social|شبکه های اجتماعی|مدیر بازرگانی|business development|account manager/i;
+let S={jobs:[],companies:[],tracker:{},crawl:{}},tab="target",sort={k:"posted",d:-1};
+const $=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const st=k=>(S.tracker[k]||{}).status||"new";
+async function api(p,b){const r=await fetch(p,b?{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}:{});return r.json()}
+async function load(){const d=await api("/api/data");S=d;$("crawled").textContent="Last crawl: "+d.crawled;
+ $("refresh").disabled=d.crawl.running;$("refresh").textContent=d.crawl.running?"Crawling… (~1 min)":"Refresh from sites";
+ if(d.crawl.running)setTimeout(load,4000);render()}
+function track(k,f){Object.assign(S.tracker[k]=S.tracker[k]||{},f);api("/api/track",{key:k,...f}).then(r=>{S.tracker[k]=r.record;stats()})}
+function stats(){const c={};S.jobs.forEach(j=>c[st(j.url)]=(c[st(j.url)]||0)+1);
+ $("stats").innerHTML=STATES.filter(s=>s!="new"&&c[s]).map(s=>`<span class="pill s-${s}">${s} ${c[s]}</span>`).join("")}
+function filtered(){const q=$("q").value.toLowerCase(),fs=$("fs").value,fsrc=$("fsrc").value;
+ return S.jobs.filter(j=>{const s=st(j.url),n=(S.tracker[j.url]||{}).note||"";
+  if(tab=="target"&&!j.target)return false;if(tab=="applied"&&!["applied","interview","offer","rejected"].includes(s))return false;
+  if($("eng").checked&&j.source!="manual"&&(!ENG.test(j.title)||NOENG.test(j.title)))return false;
+  if($("hide").checked&&["rejected","ignored"].includes(s))return false;if(fs&&s!=fs)return false;if(fsrc&&j.source!=fsrc)return false;
+  return !q||(j.title+" "+j.company+" "+n).toLowerCase().includes(q)})}
+function render(){
+ const cnt=(f)=>S.jobs.filter(f).length;
+ $("tabs").innerHTML=[["target","Target companies",cnt(j=>j.target)],["all","All jobs",S.jobs.length],["applied","My applications",cnt(j=>["applied","interview","offer","rejected"].includes(st(j.url)))],["companies","Companies",S.companies.length]]
+  .map(([k,l,n])=>`<button class="${tab==k?"on":""}" data-t="${k}">${l} (${n})</button>`).join("");
+ document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;render()});
+ const srcs=[...new Set(S.jobs.map(j=>j.source))];if($("fsrc").options.length==1)srcs.forEach(s=>$("fsrc").add(new Option(s,s)));
+ if($("fs").options.length==1)STATES.forEach(s=>$("fs").add(new Option(s,s)));
+ stats();$("view").innerHTML=tab=="companies"?companies():jobs()}
+function companies(){return '<div class="cg">'+S.companies.map(c=>{const n=S.jobs.filter(j=>j.target==c.name).length,a=c.aliases[0];
+ return `<div class="cc"><h3>${esc(c.name)}</h3><div class="mut">${esc(c.group)} · ${n} open jobs</div><div style="margin:8px 0">
+ ${c.careers?`<a target=_blank href="${esc(c.careers)}">careers</a> · `:""}<a target=_blank href="https://jobinja.ir/companies?q=${encodeURIComponent(a)}">jobinja</a> ·
+ <a target=_blank href="https://jobvision.ir/companies?keyword=${encodeURIComponent(a)}">jobvision</a> ·
+ <a target=_blank href="https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(c.name)}&location=Tehran">linkedin</a></div>
+ <select class="st" data-ck="company:${esc(c.name)}">${STATES.map(s=>`<option ${st("company:"+c.name)==s?"selected":""}>${s}</option>`).join("")}</select></div>`}).join("")+"</div>"}
+function jobs(){const rows=filtered().sort((a,b)=>{const x=a[sort.k]||"",y=b[sort.k]||"";return x<y?-sort.d*-1:x>y?sort.d*-1:0}).reverse();
+ const h=[["title","Title"],["company","Company"],["source","Source"],["posted","Posted"],["salary","Salary"]];
+ return `<div class="mut" style="margin-bottom:6px">${rows.length} jobs</div><table><tr><th>Status</th>${h.map(([k,l])=>`<th data-k="${k}">${l}${sort.k==k?(sort.d>0?" ▲":" ▼"):""}</th>`).join("")}<th>Note</th></tr>`+
+ rows.map(j=>{const s=st(j.url),n=(S.tracker[j.url]||{}).note||"",ao=(S.tracker[j.url]||{}).applied_on;
+ return `<tr class="s-${s}"><td><select class="st" data-k="${esc(j.url)}">${STATES.map(x=>`<option ${x==s?"selected":""}>${x}</option>`).join("")}</select>${ao?`<div class="src">applied ${ao}</div>`:""}</td>
+ <td class="t"><a target=_blank href="${esc(j.url)}">${esc(j.title)}</a></td><td class="t">${esc(j.company)}${j.target&&j.target!=j.company?`<div class="src">${esc(j.target)}</div>`:""}</td>
+ <td class="src">${esc(j.source)}</td><td>${esc(j.posted)}</td><td>${esc(j.salary)}</td>
+ <td><input class="note" data-n="${esc(j.url)}" value="${esc(n)}" placeholder="note…"></td></tr>`}).join("")+"</table>"}
+document.addEventListener("change",e=>{const t=e.target;
+ if(t.matches("select.st")){const k=t.dataset.k||t.dataset.ck;track(k,{status:t.value});if(t.dataset.k)t.closest("tr").className="s-"+t.value}
+ else if(t.matches(".note"))track(t.dataset.n,{note:t.value});
+ else if(t.matches("#fs,#fsrc,#eng,#hide"))render()});
+$("q").oninput=()=>{const p=$("q").selectionStart;render()};
+document.addEventListener("click",e=>{const th=e.target.closest("th[data-k]");if(th){const k=th.dataset.k;sort={k,d:sort.k==k?-sort.d:-1};render()}});
+$("refresh").onclick=async()=>{await api("/api/crawl",{});load()};
+$("add").onclick=()=>$("dlg").showModal();
+$("msave").onclick=async e=>{if(!$("mt").value||!$("mu").value)return;await api("/api/manual",{title:$("mt").value,company:$("mc").value,url:$("mu").value,salary:$("ms").value});["mt","mc","mu","ms"].forEach(i=>$(i).value="");load()};
+load();
+</script></body></html>

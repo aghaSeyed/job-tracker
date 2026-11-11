@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.tmp
+tracker.json
+manual.json
+jobs.json
+report.html

@@ -1,0 +1,252 @@
+[
+ {
+  "name": "Digikala",
+  "group": "Digikala Group",
+  "aliases": [
+   "دیجی‌کالا",
+   "دیجی‌‌کالا",
+   "دیجیکالا",
+   "digikala"
+  ],
+  "careers": "https://digikala.com/jobs/"
+ },
+ {
+  "name": "Digikala Jet / Digipay",
+  "group": "Digikala Group",
+  "aliases": [
+   "دیجی‌پی",
+   "دیجی پی",
+   "دیجی‌‌پی",
+   "digipay"
+  ],
+  "careers": "https://www.digipay.ir/careers"
+ },
+ {
+  "name": "Divar",
+  "group": "Top product",
+  "aliases": [
+   "دیوار",
+   "divar"
+  ],
+  "careers": "https://divar.ir/about/careers"
+ },
+ {
+  "name": "Snapp",
+  "group": "Snapp Group",
+  "aliases": [
+   "اسنپ",
+   "گروه اسنپ",
+   "snapp group"
+  ],
+  "careers": "https://snapp.ir/careers"
+ },
+ {
+  "name": "SnappFood",
+  "group": "Snapp Group",
+  "aliases": [
+   "اسنپ‌فود",
+   "اسنپ فود",
+   "snappfood"
+  ],
+  "careers": "https://snappfood.ir/careers"
+ },
+ {
+  "name": "Snapp Market / Box / Doctor / Trip",
+  "group": "Snapp Group",
+  "aliases": [
+   "اسنپ مارکت",
+   "اسنپ باکس",
+   "اسنپ دکتر",
+   "اسنپ تریپ",
+   "اسنپ‌شاپ",
+   "اسنپ شاپ",
+   "اسنپ پی",
+   "snapp market",
+   "snapptrip",
+   "snappbox",
+   "snappdoctor",
+   "snappshop",
+   "snapp pay"
+  ],
+  "careers": "https://snapp.group/careers"
+ },
+ {
+  "name": "Tapsi",
+  "group": "Top product",
+  "aliases": [
+   "تپسی",
+   "tapsi"
+  ],
+  "careers": "https://tapsi.ir/careers"
+ },
+ {
+  "name": "Cafe Bazaar",
+  "group": "Top product",
+  "aliases": [
+   "کافه بازار",
+   "کافه‌بازار",
+   "cafebazaar",
+   "bazaar"
+  ],
+  "careers": "https://cafebazaar.ir/careers"
+ },
+ {
+  "name": "Nobitex",
+  "group": "Crypto",
+  "aliases": [
+   "نوبیتکس",
+   "nobitex"
+  ],
+  "careers": "https://nobitex.ir/careers/"
+ },
+ {
+  "name": "Wallex",
+  "group": "Crypto",
+  "aliases": [
+   "والکس",
+   "wallex"
+  ],
+  "careers": "https://wallex.ir/careers"
+ },
+ {
+  "name": "Ramzinex",
+  "group": "Crypto",
+  "aliases": [
+   "رمزینکس",
+   "ramzinex"
+  ],
+  "careers": "https://ramzinex.com/careers"
+ },
+ {
+  "name": "Exir",
+  "group": "Crypto",
+  "aliases": [
+   "exir.io",
+   "صرافی اکسیر",
+   "exir exchange"
+  ],
+  "careers": "https://exir.io/careers"
+ },
+ {
+  "name": "Tabdeal",
+  "group": "Crypto",
+  "aliases": [
+   "صرافی ارزدیجیتال تبدیل",
+   "tabdeal"
+  ],
+  "careers": "https://tabdeal.org/careers"
+ },
+ {
+  "name": "Bitpin",
+  "group": "Crypto",
+  "aliases": [
+   "بیت‌پین",
+   "بیت پین",
+   "bitpin"
+  ],
+  "careers": "https://bitpin.ir/careers"
+ },
+ {
+  "name": "Okex/Arz Digital & others",
+  "group": "Crypto",
+  "aliases": [
+   "بیتبرگ",
+   "bitberg"
+  ],
+  "careers": ""
+ },
+ {
+  "name": "Golrang / Gold's companies (Zarpay, Talasea, Milli, Goldika)",
+  "group": "Gold",
+  "aliases": [
+   "طلاسی",
+   "talasea",
+   "گلدیکا",
+   "goldika",
+   "گروه میلی",
+   "milli",
+   "زرپی",
+   "zarpay",
+   "طلاینو",
+   "talaino"
+  ],
+  "careers": ""
+ },
+ {
+  "name": "Torob",
+  "group": "Top product",
+  "aliases": [
+   "ترب",
+   "torob"
+  ],
+  "careers": "https://torob.com/careers"
+ },
+ {
+  "name": "Alibaba",
+  "group": "Top product",
+  "aliases": [
+   "علی‌بابا",
+   "علی بابا",
+   "alibaba"
+  ],
+  "careers": "https://www.alibaba.ir/careers"
+ },
+ {
+  "name": "Mamad / Snapp-like: Okala, Basalam",
+  "group": "Top product",
+  "aliases": [
+   "باسلام",
+   "basalam",
+   "اکالا",
+   "okala"
+  ],
+  "careers": ""
+ },
+ {
+  "name": "Behpardakht / Sadad / Asan Pardakht",
+  "group": "Fintech",
+  "aliases": [
+   "آسان پرداخت",
+   "asanpardakht",
+   "asan pardakht",
+   "به‌پرداخت ملت",
+   "بهپرداخت ملت"
+  ],
+  "careers": ""
+ },
+ {
+  "name": "Blu / Bank Melli digital",
+  "group": "Fintech",
+  "aliases": [
+   "بلو بانک",
+   "blubank",
+   "blu bank"
+  ],
+  "careers": ""
+ },
+ {
+  "name": "Fidibo / Namava / Filimo",
+  "group": "Media",
+  "aliases": [
+   "فیدیبو",
+   "نماوا",
+   "فیلیمو",
+   "namava",
+   "filimo",
+   "fidibo"
+  ],
+  "careers": ""
+ },
+ {
+  "name": "Shaparak / Pasargad / Saman (banks, high pay)",
+  "group": "Fintech",
+  "aliases": [
+   "پرداخت الکترونیک پاسارگاد",
+   "پرداخت الکترونیک سامان",
+   "سامان کیش",
+   "بانک پاسارگاد",
+   "بانک سامان"
+  ],
+  "careers": ""
+ }
+]
